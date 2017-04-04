@@ -1,0 +1,535 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Vim技巧 | 皓月繁星点点</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="皓繁">
+    
+
+    
+    <meta name="description" content="1 命令快捷键总结
+Ctrl+z 回到shell，在shell中输入fg回车回到vim
+要同时在多行相同位置插入复制的内容，首先 Ctrl + v 选择位置，然后输入 大写i 进入编辑模式，然后 shift+insert 粘贴，最后Esc退出visual block模式，插入成功
+/xxx 查找xxx，按n/N 跳转到下一个/上一个匹配位置
+:vsp xxx 垂直分割窗口打开xxx :sp xxx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vim技巧">
+<meta property="og:url" content="http://jiadebin.github.io/2017/04/03/Vim技巧/index.html">
+<meta property="og:site_name" content="皓月繁星点点">
+<meta property="og:description" content="1 命令快捷键总结
+Ctrl+z 回到shell，在shell中输入fg回车回到vim
+要同时在多行相同位置插入复制的内容，首先 Ctrl + v 选择位置，然后输入 大写i 进入编辑模式，然后 shift+insert 粘贴，最后Esc退出visual block模式，插入成功
+/xxx 查找xxx，按n/N 跳转到下一个/上一个匹配位置
+:vsp xxx 垂直分割窗口打开xxx :sp xxx">
+<meta property="og:updated_time" content="2017-04-03T02:36:19.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vim技巧">
+<meta name="twitter:description" content="1 命令快捷键总结
+Ctrl+z 回到shell，在shell中输入fg回车回到vim
+要同时在多行相同位置插入复制的内容，首先 Ctrl + v 选择位置，然后输入 大写i 进入编辑模式，然后 shift+insert 粘贴，最后Esc退出visual block模式，插入成功
+/xxx 查找xxx，按n/N 跳转到下一个/上一个匹配位置
+:vsp xxx 垂直分割窗口打开xxx :sp xxx">
+
+    
+    <link rel="alternative" href="/atom.xml" title="皓月繁星点点" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="皓月繁星点点" title="皓月繁星点点"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="皓月繁星点点">皓月繁星点点</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜單">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:jiadebin.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/03/Vim技巧/" title="Vim技巧" itemprop="url">Vim技巧</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="皓繁" target="_blank" itemprop="author">皓繁</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-03T02:24:36.000Z" itemprop="datePublished"> 發表於 2017-04-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目錄</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-命令快捷键总结"><span class="toc-number">1.</span> <span class="toc-text">1 命令快捷键总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-ctags-taglist配置使用"><span class="toc-number">2.</span> <span class="toc-text">2 ctags/taglist配置使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-vimrc配置-含快捷键"><span class="toc-number">3.</span> <span class="toc-text">3 .vimrc配置(含快捷键)</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="1-命令快捷键总结"><a href="#1-命令快捷键总结" class="headerlink" title="1 命令快捷键总结"></a>1 命令快捷键总结</h2><ol>
+<li>Ctrl+z 回到shell，在shell中输入fg回车回到vim</li>
+<li>要同时在多行相同位置插入复制的内容，首先 Ctrl + v 选择位置，然后输入 大写i 进入编辑模式，然后 shift+insert 粘贴，最后Esc退出visual block模式，插入成功</li>
+<li>/xxx 查找xxx，按n/N 跳转到下一个/上一个匹配位置</li>
+<li>:vsp xxx 垂直分割窗口打开xxx<br> :sp xxx 水平分割窗口</li>
+<li>:bn 和 :bp 切换上一个/下一个文件编辑窗口（或者Ctrl+ww）</li>
+<li># 匹配上一个当前单词<br>* 匹配下一个当前单词</li>
+<li>:1, 5 copy 20 将1至5行内容复制到20行位置</li>
+<li>:d5 剪切从当前行开始的5行，用p粘贴到指定行</li>
+<li>dw 剪切当前字符开始的一个词，使用 p 粘贴</li>
+<li>cw 删除当前字符开始的单词，并进入插入模式（相当于替换当前单词内容）</li>
+<li>0 移动到本行最开头<br>$ 移动到本行最尾部<br>w 移动到下一个单词起始字符处<br>e 移动到下一个单词结尾字符处</li>
+<li>% 匹配括号进行移动，可以从 ‘{‘ 移动到对应的 ‘}’，或者反之（首先得保证当前光标在某个半括号上，适用于大中小括号）</li>
+<li>u undo</li>
+<li>Ctrl+r redo</li>
+<li>Ctrl+p/n 自动补全，p表示向上查找匹配词，n表示向下查找；</li>
+<li>:s/xxx/yyy/ 将当前行中的第一个「xxx」替换为「yyy」<br>:s/xxx/yyy/g 将当前行中的所有「xxx」替换为「yyy」<br>:s/xxx/yyy/gc 同上，但每次替换都会询问<br>:%s/xxx/yyy/g 将整个文件中的所有「xxx」替换为「yyy」</li>
+<li>Ctrl+o 回到上一次编辑处<br>Ctrl+i 回到下一次编辑处</li>
+<li>:x 等价于 :wq 等价于 ZZ 保存并退出</li>
+<li>vim -d file1 file2 比较两个文件不同之处</li>
+<li>光标位置移动：<br>a. 保持当前光标位置仅滚动屏幕内容：Ctrl+e/y<br>b. 移动光标到上/下一个历史位置：Ctrl+o/i</li>
+<li>visual、visual行/列模式：<br>a. visual模式：normal模式下按v进入该模式，移动光标可以选中光标首尾的内容；<br>b. visual line模式：即行模式，normal模式下按大写V（或shift+v）进入该模式，移动光标可以选中对应的行；<br>c. visual block模式：即列模式，normal模式下按Ctrl+v进入该模式，移动光标可以选中对应列的内容；</li>
+</ol>
+<h2 id="2-ctags-taglist配置使用"><a href="#2-ctags-taglist配置使用" class="headerlink" title="2 ctags/taglist配置使用"></a>2 ctags/taglist配置使用</h2><p><strong>用途：</strong><br>ctags是一个工具软件，可以为大型项目的源代码生成标签，便于阅读源码时进行跨文件跳转，就像在windows中使用source insight一样，非常方便。</p>
+<p><strong>配置：</strong>  </p>
+<ol>
+<li><p>生成标签文件<br>在项目根目录下执行如下命令：<br>$ctags -R .<br>其中-R表示递归地为当前目录及子目录中所有的源码文件生成标签文件tags，该文件会保存在当前目录下。  </p>
+</li>
+<li><p>使用tag进行跳转<br>1) 用vim打开一个源码文件，随便找到一个变量或者函数调用位置<br>2) 按Ctrl+]可以跳转到该变量/函数定义的位置(可能位于其他文件)，如果有多个文件都包含同名的定义，那么它会以列表形式显示，让你输入编号进行选择<br>3) 按Ctrl+t跳回之前的位置<br>注意：此时打开vim必须在tags文件所在目录，否则会提示找不到tags文件，对于大项目，你可能需要在任意目录下查看源码，这就需要在.vimrc文件中增加一行：<br>set tags=tags;/<br>该命令指示vim在当前目录找不到ctags文件时，自动去上层目录查找。  </p>
+</li>
+<li><p>taglist插件安装<br>taglist是一个vim插件，可以显示源码文件的梗概，如变量、方法列表。安装方法是到www.vim.org中搜索该plugin，然后下载、解压，它会自动解压到 ~/.vim/plugin 中，如果该目录不存在请手动创建。<br>安装完成之后，利用vim打开一个源码文件，然后进入 :命令模式，输入：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:Tlist</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>即可打开taglist窗口，按F1可以看到操作帮助，为了方便，也可以自己设置打开/关闭taglist的快捷键，比如用F8作为快捷键，则需在.vimrc中添加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nnoremap &lt;silent&gt; &lt;F8&gt; :TlistToggle&lt;CR&gt;</div></pre></td></tr></table></figure></p>
+<p>这样就可以利用F8打开/关闭taglist了。<br>ctags显示跳转列表需要在vimrc文件中添加一行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">set cscopetag</div></pre></td></tr></table></figure></p>
+<h2 id="3-vimrc配置-含快捷键"><a href="#3-vimrc配置-含快捷键" class="headerlink" title="3 .vimrc配置(含快捷键)"></a>3 .vimrc配置(含快捷键)</h2><p>参考<a href="http://www.360doc.com/content/13/0111/13/168576_259534618.shtml" target="_blank" rel="external">文章1</a><br>参考<a href="http://www.cnblogs.com/moodlxs/archive/2012/03/24/2415526.html" target="_blank" rel="external">文章2</a><br>参考<a href="http://vim.sourceforge.net/scripts/script.php?script_id=2506" target="_blank" rel="external">文章3</a><br>参考<a href="https://zybuluo.com/uuprince/note/81709" target="_blank" rel="external">文章4</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://jiadebin.github.io/2017/04/03/Vim技巧/" data-title="Vim技巧 | 皓月繁星点点" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/03/Linux-Shell命令总结/" title="Linux Shell命令总结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Linux Shell命令总结</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/03/Words/"  title="Beautiful Words">
+ <strong>下一篇：</strong><br/> 
+ <span>Beautiful Words
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="顯示側邊欄"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目錄</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-命令快捷键总结"><span class="toc-number">1.</span> <span class="toc-text">1 命令快捷键总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-ctags-taglist配置使用"><span class="toc-number">2.</span> <span class="toc-text">2 ctags/taglist配置使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-vimrc配置-含快捷键"><span class="toc-number">3.</span> <span class="toc-text">3 .vimrc配置(含快捷键)</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隱藏側邊欄"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">標簽</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/快捷键/" title="快捷键">快捷键<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/B-tree/" title="B+tree">B+tree<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/sublime-text/" title="sublime text">sublime text<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/shell/" title="shell">shell<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情鏈接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 訂閱</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=b3593ceb&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Larry Page in Google. <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2176287895" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="皓繁">皓繁</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回頂部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
