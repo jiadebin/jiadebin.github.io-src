@@ -1,0 +1,493 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>C++语言相关 | 皓月繁星点点</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="皓繁">
+    
+
+    
+    <meta name="description" content="1、volatile：修饰符表示每次读取变量的值都从内存地址读取，不读寄存器。对于多线程访问的值来说，如果不加volatile，编译器可能进行优化，直接从寄存器读取该值，这样的话某个线程修改了该变量，寄存器中的值可能是脏数据，其他线程读取时就会读到旧值。2、mutable：修饰的变量在const函数中也可以被修改。3、C++ 枚举类型与int相互转换问题，编译器支持自动将枚举转换为int，但不支持">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++语言相关">
+<meta property="og:url" content="http://jiadebin.github.io/2017/04/03/C-语言相关/index.html">
+<meta property="og:site_name" content="皓月繁星点点">
+<meta property="og:description" content="1、volatile：修饰符表示每次读取变量的值都从内存地址读取，不读寄存器。对于多线程访问的值来说，如果不加volatile，编译器可能进行优化，直接从寄存器读取该值，这样的话某个线程修改了该变量，寄存器中的值可能是脏数据，其他线程读取时就会读到旧值。2、mutable：修饰的变量在const函数中也可以被修改。3、C++ 枚举类型与int相互转换问题，编译器支持自动将枚举转换为int，但不支持">
+<meta property="og:updated_time" content="2017-04-04T11:56:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++语言相关">
+<meta name="twitter:description" content="1、volatile：修饰符表示每次读取变量的值都从内存地址读取，不读寄存器。对于多线程访问的值来说，如果不加volatile，编译器可能进行优化，直接从寄存器读取该值，这样的话某个线程修改了该变量，寄存器中的值可能是脏数据，其他线程读取时就会读到旧值。2、mutable：修饰的变量在const函数中也可以被修改。3、C++ 枚举类型与int相互转换问题，编译器支持自动将枚举转换为int，但不支持">
+
+    
+    <link rel="alternative" href="/atom.xml" title="皓月繁星点点" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="皓月繁星点点" title="皓月繁星点点"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="皓月繁星点点">皓月繁星点点</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:jiadebin.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/03/C-语言相关/" title="C++语言相关" itemprop="url">C++语言相关</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="皓繁" target="_blank" itemprop="author">皓繁</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-03T08:21:09.000Z" itemprop="datePublished"> Published 2017-04-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			
+		
+		</div>
+		
+		<p>1、volatile：修饰符表示每次读取变量的值都从内存地址读取，不读寄存器。对于多线程访问的值来说，如果不加volatile，编译器可能进行优化，直接从寄存器读取该值，这样的话某个线程修改了该变量，寄存器中的值可能是脏数据，其他线程读取时就会读到旧值。<br>2、mutable：修饰的变量在const函数中也可以被修改。<br>3、C++ 枚举类型与int相互转换问题，编译器支持自动将枚举转换为int，但不支持int自动转枚举，需要强制转换。参考。<br>4、namespace使用时直接以 :: 开头，如 ::val = x;   表示此处的变量val是全局作用域中的val，如果定义了一个全局变量val，函数内部也定义了一个局部变量val，那么要想使用这个全局的val，就需要加上全局作用域标识符。<br>5、宏USED_PARA的<a href="http://www.cnblogs.com/verygis/archive/2012/05/03/2480130.html" target="_blank" rel="external">作用</a>：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#ifndef   UNUSED_PARAM</div><div class="line">#define   UNUSED_PARAM(v)   (void)(v)</div><div class="line">#endif</div></pre></td></tr></table></figure></p>
+<p>假如一个有返回值的函数，如调用时是没有使用它的返回值，编译器会给出一个警告，用void强制转换一下，则明确告诉编译器不使用返回值，这样可以消除编译警告。因为如果采用严格的编译模式，未使用的变量编译时会报错。<br>6、REACH_TIME_INTERVAL宏的作用是判断是否达到指定的时间间隔：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#define REACH_TIME_INTERVAL(i) \</div><div class="line">  (&#123; \</div><div class="line">    bool ret = false; \</div><div class="line">    static volatile int64_t last_time = 0; \</div><div class="line">    int64_t cur_time = ::common::current_time(); \</div><div class="line">    int64_t old_time = last_time; \</div><div class="line">    if ((i + last_time) &lt; cur_time \</div><div class="line">        &amp;&amp; old_time == ATOMIC_CAS(&amp;last_time, old_time, cur_time)) \</div><div class="line">    &#123; \</div><div class="line">      ret = true; \</div><div class="line">    &#125; \</div><div class="line">    ret; \</div><div class="line">  &#125;)</div></pre></td></tr></table></figure></p>
+<p>该宏返回bool值，参数i为微秒数，比如1000*1000表示1秒，last_time为static且volatile的，这样多个线程将访问到相同的值，if判断中第一个条件表示cur_time是否已经超出了last_time指定的间隔i，如果不是则跳出if并返回false，否则判断第二个条件，第二个条件为了控制并发访问，原子地更新last_time的值，如果自从old_time被赋值之后没有其他线程修改last_time的值，那么就返回true，说明超过了间隔i。比如last_time=10000，i=200，cur_time=10222，那么就说明超过了间隔。该宏的应用场景是避免一些频繁的操作，如多线程打印日志，可以限制至少经过10秒才打印一次，避免日志过多。<br>7、自旋锁特点：busy-waiting，普通读写锁和mutex则是sleep-waiting。例如在一个双核的机器上有两个线程(A和B)，分别运行在核心和 核心1上。假设线程A想要通过pthread_mutex_lock对临界区加锁，而此时这个锁正被线程B所持有，那么A就会阻塞 (blocking)，Core0会在此时进行上下文切换(Context Switch)将线程A置于等待队列中，此时Core0就可以运行其他的任务(例如另一个线程C)而不必进行忙等待。而Spin lock则不然，如果使用的是自旋锁，那么线程A就会一直在Core0上进行忙等待并不停的进行锁请求，直到得到这个锁为止。自旋锁的效率比普通锁要高，但是代价是更高的CPU占用。<br>try_lock和lock的区别就是try_lock获取不到锁时不会等待，避免死等。<br>8、explicit关键字的作用：只能用于修饰类的构造函数（通常用于修饰带参数的构造函数），这样的类不会发生隐式类型转换。<br>9、LIKELY、UNLIKELY 可以给编译器提示，减少分支预测错误的出现。<br>10、在.cpp文件中定义成员函数，函数中使用类的成员变量时编译报错：xxx was not declared in this scope.<br>原因：低级错误，该成员函数名字前面没有加类名作用域。<br>11、C++ 枚举类型与int相互转换：编译器支持自动将枚举转换为int，但不支持int自动转枚举，需要强制转换。<br>但是在g++编译器中，即使用强制转换运行时也会报拒绝访问。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">enum Day &#123;</div><div class="line">  Monday,</div><div class="line">  Tuesday,</div><div class="line">  Wednesday</div><div class="line">&#125;;</div><div class="line">int main()</div><div class="line">&#123;</div><div class="line">  Day d = Tuesday;</div><div class="line">  cout &lt;&lt; d &lt;&lt; endl;  //输出1</div><div class="line">  d = Day(0);         //编译通过，运行时报拒绝访问</div><div class="line">  cout &lt;&lt; d &lt;&lt; endl;</div><div class="line">  return 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>总之，在使用枚举类型时，记得按照枚举变量名方式赋值才算正确使用方式。<br>参考自<a href="http://blog.csdn.net/lihao21/article/details/6825722" target="_blank" rel="external">博客</a>。<br>12、LIKELY/UNLIKELY宏：在代码中经常可以看到如下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#define likely(x)       __builtin_expect(!!(x), 1)  //用!!的目的是对于大于1的x取非一次得到0，再取非则得到1</div><div class="line">#define unlikely(x)     __builtin_expect(!!(x), 0)</div><div class="line">if(LIKELY(x &gt; 0)) &#123;</div><div class="line">  y = 1;</div><div class="line">&#125; else &#123;</div><div class="line">  y = -1;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>对于这两个宏的意义，我们首先从CPU的指令流水线谈起，CPU为了提高指令执行的效率，采用流水线技术来预取下一条指令，如下图：<br>+————————————————————<br>|取指令1|执行指令|输出结果|<br>+————————————————————<br>|空空空空|取指令2|执行指令|输出结果<br>+————————————————————<br>|空空空空空空空空|取指令3 …<br>+————————————————————<br>通常如果指令1、2、3是程序的真实执行顺序的话这样做没有问题，但是如果指令1是一个if判断，判断条件失败时就会发生分支跳转，指令2不再是下一条要执行的指令，这时CPU就需要重新从内存中读取目标指令替换指令2，这样执行效率就比较低了。分支预测失败就会降低指令预取的效果，因此GCC编译器为程序员提供了帮助处理分支预测的函数，可以提高分支预测的准确性，优化程序性能。<br>比如上面的示例代码，由于LIKELY表明 x&gt;0 的概率比较高，这样gcc编译器编译出来的指令会预取 y=1 这条指令，如果 x&gt;0 的概率很小，则应该将LIKELY替换为UNLIKELY，这样预取的指令会变为 y=-1。<br>也就是说，gcc编译器编译过程中总是会预取出更可能发生的指令，而LIKELY/UNLIKELY正是程序员给编译器的暗示，让程序性能优化得更高。<br>参考<a href="https://my.oschina.net/moooofly/blog/175019" target="_blank" rel="external">文章</a>  </p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://jiadebin.github.io/2017/04/03/C-语言相关/" data-title="C++语言相关 | 皓月繁星点点" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/03/自旋锁SpinLock/" title="自旋锁SpinLock">
+  <strong>上一篇：</strong><br/>
+  <span>
+  自旋锁SpinLock</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/03/头文件中定义函数引发的multiple-definition/"  title="头文件中定义函数引发的multiple definition">
+ <strong>下一篇：</strong><br/> 
+ <span>头文件中定义函数引发的multiple definition
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/B-tree/" title="B+tree">B+tree<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Paxos/" title="Paxos">Paxos<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/sublime-text/" title="sublime text">sublime text<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/快捷键/" title="快捷键">快捷键<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/shell/" title="shell">shell<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/隔离级别/" title="隔离级别">隔离级别<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">Weibo</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=b3593ceb&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m 皓繁. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2163818357" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="皓繁">皓繁</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

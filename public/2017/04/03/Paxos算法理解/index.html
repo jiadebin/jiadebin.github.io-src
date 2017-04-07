@@ -1,0 +1,558 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Paxos算法理解 | 皓月繁星点点</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="皓繁">
+    
+
+    
+    <meta name="description" content="一致性算法
+Paxos算法（Basic Paxos）用来解决分布式环境中多台机器对某个提案/值达成一致的问题。  
+
+Paxos算法中的三个角色：proposer、acceptor、learner。一台机器可以兼任三种角色。注意accept和chosen的区别：  
+
+accept：即接受，一个acceptor可以接受任何proposal。
+chosen：即批准，只有被大多数acceptor所ac">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Paxos算法理解">
+<meta property="og:url" content="http://jiadebin.github.io/2017/04/03/Paxos算法理解/index.html">
+<meta property="og:site_name" content="皓月繁星点点">
+<meta property="og:description" content="一致性算法
+Paxos算法（Basic Paxos）用来解决分布式环境中多台机器对某个提案/值达成一致的问题。  
+
+Paxos算法中的三个角色：proposer、acceptor、learner。一台机器可以兼任三种角色。注意accept和chosen的区别：  
+
+accept：即接受，一个acceptor可以接受任何proposal。
+chosen：即批准，只有被大多数acceptor所ac">
+<meta property="og:updated_time" content="2017-04-04T11:56:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Paxos算法理解">
+<meta name="twitter:description" content="一致性算法
+Paxos算法（Basic Paxos）用来解决分布式环境中多台机器对某个提案/值达成一致的问题。  
+
+Paxos算法中的三个角色：proposer、acceptor、learner。一台机器可以兼任三种角色。注意accept和chosen的区别：  
+
+accept：即接受，一个acceptor可以接受任何proposal。
+chosen：即批准，只有被大多数acceptor所ac">
+
+    
+    <link rel="alternative" href="/atom.xml" title="皓月繁星点点" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="皓月繁星点点" title="皓月繁星点点"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="皓月繁星点点">皓月繁星点点</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:jiadebin.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/03/Paxos算法理解/" title="Paxos算法理解" itemprop="url">Paxos算法理解</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="皓繁" target="_blank" itemprop="author">皓繁</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-03T07:36:18.000Z" itemprop="datePublished"> Published 2017-04-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一致性算法"><span class="toc-number">1.</span> <span class="toc-text">一致性算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-问题描述"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 问题描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-value的决策"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 value的决策</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-Paxos算法内容"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 Paxos算法内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-prepare阶段："><span class="toc-number">1.3.1.</span> <span class="toc-text">1. prepare阶段：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-accept阶段："><span class="toc-number">1.3.2.</span> <span class="toc-text">2. accept阶段：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-算法的Progress保证"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 算法的Progress保证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-算法扩展"><span class="toc-number">2.</span> <span class="toc-text">2 算法扩展</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="一致性算法"><a href="#一致性算法" class="headerlink" title="一致性算法"></a>一致性算法</h2><blockquote>
+<p>Paxos算法（Basic Paxos）用来解决分布式环境中多台机器对某个提案/值达成一致的问题。  </p>
+</blockquote>
+<p>Paxos算法中的三个角色：proposer、acceptor、learner。一台机器可以兼任三种角色。<br>注意accept和chosen的区别：  </p>
+<ul>
+<li>accept：即接受，一个acceptor可以接受任何proposal。</li>
+<li>chosen：即批准，只有被大多数acceptor所accept的proposal才算被批准。</li>
+</ul>
+<h3 id="1-1-问题描述"><a href="#1-1-问题描述" class="headerlink" title="1.1 问题描述"></a>1.1 问题描述</h3><p>假设一组进程都可以提出值进行决议，一致性算法保证只有其中一个value被最终选择。如果没有value被proposed，那么就不会选择任何value。如果某个value被chosen了，所有的进程都可以learn到这个value。由此可以得出一致性的安全性（safety）需求如下：  </p>
+<ul>
+<li>一个value只有被proposed之后才有可能被chosen，</li>
+<li>再一次Paxos算法运行实例中，只有一个value最终会被chosen，并且</li>
+<li>learner只能获取到被chosen的value。</li>
+</ul>
+<p>除了safety，还需要保证progress，后面将会讨论。<br>算法的作者Lamport在论文中不断地加强上述三个约束（关键是第二个）最终提出了Paxos算法。  </p>
+<h3 id="1-2-value的决策"><a href="#1-2-value的决策" class="headerlink" title="1.2 value的决策"></a>1.2 value的决策</h3><p>决策一个值最简单的方式就是只设置一个acceptor，这样一个proposer发送proposal给这个acceptor，然后acceptor总是会选择它所接收到的第一个value（proposal中会指定value）。这是最simple的方法，但是它不能满足要求，因为acceptor存在单点故障。<br>因此，更进一步，我们设置多个acceptor，一个proposer提出一个value给acceptor，一个acceptor可能会接受这个value。只有当大多数acceptor都接受这个value时才算它被chosen，大多数的意思通常是超过半数的参与者，因为任何。两个大多数集合一定至少有一个公共的参与者，这样当一个acceptor最多只能接受一个value时保证大多数能够达成一致。<br>这种方式可以在只有一个proposer且该proposer只提出一个value请求决策的前提下能够正常工作。<br>这种情况下，一致性算法要想能够工作，暗含如下约束：  </p>
+<blockquote>
+<p>P1. 一个acceptor必须接受它收到的第一个value。</p>
+</blockquote>
+<p>这个约束显然是有问题的，因为多个proposer可能在相同时刻提出多个不同的value，这会导致虽然每个acceptor都接受了一个value，但是并没有某个value被大多数acceptor所接受。例如假设有两个value分别被一半的acceptor接受，那么最终无法达成一致。<br>P1的约束暗示一个acceptor必须能够接受多个proposal。我们利用不同的编号来跟踪不同的proposal，这样每个proposal包含一个唯一的编号和一个值。这样一个value被chosen也就表示其所属的proposal被大多数acceptor所接受。<br>我们允许有多个proposal被依次chosen的情况发生（后面的proposal编号更高），但是必须保证这多个proposal都包含相同的value，这样需要如下约束：  </p>
+<blockquote>
+<p>P2. 如果一个带有值v的proposal被chosen，那么每个被chosen的具备更高编号的proposal都具有值v。</p>
+</blockquote>
+<p>proposal的编号都是有序的，后面的会比前面的编号更高。<br>P2可以保证safety约束的第二条：只有一个value会被chosen。<br>要想被chosen，一个proposal必须至少被一个acceptor接受，因此，我们可以用P2a来满足P2：  </p>
+<blockquote>
+<p>P2a. 如果一个带有值v的proposal被chosen了，那么后续每个acceptor所accept（注意是accept，而不是chosen，单个acceptor可以accept任何proposal，被大多数acceptor所accept得proposal才叫chosen）的每个具备更高编号的proposal都必须具备值v。</p>
+</blockquote>
+<p>我们依然需要满足P1来保证某个proposal被chosen。但是由于通信是异步的，P2a可能与P1发生冲突，考虑这种情况：一个值为v的proposal被chosen了，说明它被大多数acceptor所accept，但是依然存在少部分acceptor没有收到这个proposal，此时如果一个新的proposer苏醒并提出一个更高编号的值不是v的proposal发给这些少部分acceptor，那么根据P1的约束，这些acceptor一定会accept这个新的proposal，这就违背了P2a约束。  </p>
+<p>要想保持P1和P2a，就需要进一步加强P2a：  </p>
+<blockquote>
+<p>p2b. 如果一个值为v的proposal被chosen了，后续被任何proposer提出的更高编号的proposal的值都必须是v。</p>
+</blockquote>
+<p>由于一个proposal一定是先被某个proposer提出，然后才能被acceptor接受，最后才能被批准。P2b比P2a时序更早，从accept阶段提前到了issue阶段，因此满足P2b一定能满足P2a，从而满足P2约束。<br>如何满足P2b？我们进一步提出P2c：  </p>
+<blockquote>
+<p>P2c. 对于任意的值v和编号n，如果一个带有值v编号为n的proposal被提出，那么一定有一个多数参与者集合S满足：（a）S中不存在acceptor已经accept任何编号小于n的proposal，或者（b）S中的acceptor所接受的proposal中编号最高的具备值v。</p>
+</blockquote>
+<p>我们可以利用数学归纳法证明P2c蕴含P2b：<br>假设具备值v编号为m的proposal已经被chosen，当n=m+1时，利用反证法，如果proposal n的值不是v，而是w，根据P2c，一定存在一个多数派S满足：（1）S中的所有acceptor都没有accept过任何编号小于n的proposal，这一点显然不满足，因为S与接收过m提案的集合C一定至少有一个公共成员，显然该成员accept了提案m；（2）S中的acceptor所接受的提案中编号最高的具备值w，这一条也不满足，因为m的值是v。所以假设不成立，当n=m+1时，提案n的值与提案m相同，为v。<br>推广到更大的n，对于提案m+1…n-1，根据如上假设，它们都具备值v，假设提案n的值为x，不等于v，那么根据P2c约束，一定存在一个多数派S2，满足：（1）要么它们没有接受过任何编号小于n的任何提案，这一点显然也不满足，因为提案m…n-1已经被chosen了；（2）要么它们accept的提案中编号最大的具备值x，而如果v不等于x，显然也不满足。因此，提案n的值一定是v。<br>得证。<br>因此P2c蕴含P2b。  </p>
+<p>P2c这个约束可以通过消息传递程序进行实现。<br>根据P2c的约束内容可以得出，proposer在正式提出一个proposal之前，一定要先和大多数acceptor进行通信，得到它们之前投票的情况，根据回复的信息来设置proposal的value，然后开始投票过程，当得到大多数acceptor接受之后，提案获得通过，然后再通知learner即可。<br>由于现实环境中，多条消息可能并发到达某个acceptor，因此可能存在这种情况：某个acceptor还没有accept过任何proposal，此时它回复了编号为n的proposal自己的情况（prepare阶段），但是在对n进行表决（accept阶段）之前，它收到了编号更小为m的另一个提案的accept请求，由于此时它还没有accept提案n，因此它接受了m提案，如果提案m和n的值不一样，那么这就违背了P2c约束，因为时间原因它没有回复给n它所accept的提案m的value。<br>预防这个问题发生的方法是：acceptor给proposer第一次应答的同时保证自己不会accept编号更小的提案。这也是对P1约束的加强：  </p>
+<blockquote>
+<p>P1a. 一个acceptor可以accept编号为n的proposal当且仅当它没有回复过编号大于n的proposal的prepare请求。</p>
+</blockquote>
+<p>至此，P1a和P2c约束已经足够完备，是时候提出完整的Paxos算法了。</p>
+<h3 id="1-3-Paxos算法内容"><a href="#1-3-Paxos算法内容" class="headerlink" title="1.3 Paxos算法内容"></a>1.3 Paxos算法内容</h3><p>Paxos算法分为两个阶段：prepare阶段和accept阶段。</p>
+<h4 id="1-prepare阶段："><a href="#1-prepare阶段：" class="headerlink" title="1. prepare阶段："></a>1. prepare阶段：</h4><p>a. proposer选择一个提案编号n，并利用它构造一个prepare请求发给一个包含大多数acceptor的集合。<br>b. 如果一个acceptor编号为n的prepare请求，且n大于它已经回应过的任何一个prepare请求的编号，那么它将把它所accept过的最大编号的提案作为回复，同时承诺不再accept任何编号小于n的proposal。</p>
+<h4 id="2-accept阶段："><a href="#2-accept阶段：" class="headerlink" title="2. accept阶段："></a>2. accept阶段：</h4><p>a. 如果proposer收到了大多数acceptor对其发出的prepare请求的回复，那么它将发送提案n的accept请求给这些acceptor，该请求中包含的值v要么是回复中的此前编号最高proposal的值，要么是该proposer自定义的值（当前者不存在时）。<br>b. acceptor将接受提案n的accept请求，除非它已经回复了一个编号更高的proposal的prepare请求。  </p>
+<h3 id="1-4-算法的Progress保证"><a href="#1-4-算法的Progress保证" class="headerlink" title="1.4 算法的Progress保证"></a>1.4 算法的Progress保证</h3><p>存在这样一种情况：两个proposer不断提出编号比对方高的提案，这样会进入活锁状态，永远不会有提案获得批准。算法也就不能向前推进。<br>为了解决这个问题，确保算法能够progress，必须选出一个主proposer，且只有它能够提出提案，这样就能保证算法的正常执行。<br>如果分布式系统能够正常运行，那么主proposer的方案使得系统的liveness（响应、活跃度）也能得到保证。  </p>
+<h2 id="2-算法扩展"><a href="#2-算法扩展" class="headerlink" title="2 算法扩展"></a>2 算法扩展</h2><p>基本的Paxos算法称为Basic Paxos，它允许多个proposer同时提出提案。本算法的一个变种是Mutility Paxos，它通过利用单个主proposer同时向多个Paxos实例发出prepare请求，在后续的决议过程中直接跳过prepare阶段，直接执行accept阶段，提高算法的运行效率。之所以可以跳过prepare阶段，是因为采用了单一proposer，且只有该proposer负责提出议案，议案编号也由它生成，可以保证不存在prepare阶段中可能存在的冲突，不再需要通过prepare阶段来检测冲突。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Paxos/">Paxos</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://jiadebin.github.io/2017/04/03/Paxos算法理解/" data-title="Paxos算法理解 | 皓月繁星点点" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/03/头文件中定义函数引发的multiple-definition/" title="头文件中定义函数引发的multiple definition">
+  <strong>上一篇：</strong><br/>
+  <span>
+  头文件中定义函数引发的multiple definition</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/03/Sublime-Text-2-快捷键总结/"  title="Sublime Text 2 快捷键总结">
+ <strong>下一篇：</strong><br/> 
+ <span>Sublime Text 2 快捷键总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一致性算法"><span class="toc-number">1.</span> <span class="toc-text">一致性算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-问题描述"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 问题描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-value的决策"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 value的决策</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-Paxos算法内容"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 Paxos算法内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-prepare阶段："><span class="toc-number">1.3.1.</span> <span class="toc-text">1. prepare阶段：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-accept阶段："><span class="toc-number">1.3.2.</span> <span class="toc-text">2. accept阶段：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-算法的Progress保证"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 算法的Progress保证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-算法扩展"><span class="toc-number">2.</span> <span class="toc-text">2 算法扩展</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/B-tree/" title="B+tree">B+tree<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Paxos/" title="Paxos">Paxos<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/sublime-text/" title="sublime text">sublime text<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/快捷键/" title="快捷键">快捷键<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/shell/" title="shell">shell<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/隔离级别/" title="隔离级别">隔离级别<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">Weibo</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=b3593ceb&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m 皓繁. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2163818357" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="皓繁">皓繁</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

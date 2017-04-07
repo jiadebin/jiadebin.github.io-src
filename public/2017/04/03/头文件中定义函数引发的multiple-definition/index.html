@@ -1,0 +1,528 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>头文件中定义函数引发的multiple definition | 皓月繁星点点</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="皓繁">
+    
+
+    
+    <meta name="description" content="本文引用了博文，感谢原文作者。
+
+问题：某个头文件中声明并定义了一个函数，然后在多个源码文件中调用该函数，编译链接时出现了该函数multiple definition问题，在头文件中添加了 #ifndef 头也不行，经过尝试发现如果将该函数的声明和定义分开到.h和.cpp文件之后问题消失，为什么不能将函数直接定义在.h文件中呢？
+针对该问题，抽象出如下几个问题：  
+1. 头文件中只可以放置函数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="头文件中定义函数引发的multiple definition">
+<meta property="og:url" content="http://jiadebin.github.io/2017/04/03/头文件中定义函数引发的multiple-definition/index.html">
+<meta property="og:site_name" content="皓月繁星点点">
+<meta property="og:description" content="本文引用了博文，感谢原文作者。
+
+问题：某个头文件中声明并定义了一个函数，然后在多个源码文件中调用该函数，编译链接时出现了该函数multiple definition问题，在头文件中添加了 #ifndef 头也不行，经过尝试发现如果将该函数的声明和定义分开到.h和.cpp文件之后问题消失，为什么不能将函数直接定义在.h文件中呢？
+针对该问题，抽象出如下几个问题：  
+1. 头文件中只可以放置函数">
+<meta property="og:updated_time" content="2017-04-04T11:56:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="头文件中定义函数引发的multiple definition">
+<meta name="twitter:description" content="本文引用了博文，感谢原文作者。
+
+问题：某个头文件中声明并定义了一个函数，然后在多个源码文件中调用该函数，编译链接时出现了该函数multiple definition问题，在头文件中添加了 #ifndef 头也不行，经过尝试发现如果将该函数的声明和定义分开到.h和.cpp文件之后问题消失，为什么不能将函数直接定义在.h文件中呢？
+针对该问题，抽象出如下几个问题：  
+1. 头文件中只可以放置函数">
+
+    
+    <link rel="alternative" href="/atom.xml" title="皓月繁星点点" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="皓月繁星点点" title="皓月繁星点点"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="皓月繁星点点">皓月繁星点点</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:jiadebin.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/03/头文件中定义函数引发的multiple-definition/" title="头文件中定义函数引发的multiple definition" itemprop="url">头文件中定义函数引发的multiple definition</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="皓繁" target="_blank" itemprop="author">皓繁</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-03T08:08:14.000Z" itemprop="datePublished"> Published 2017-04-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-头文件中只可以放置函数声明，不可以放置函数定义吗？"><span class="toc-number">1.</span> <span class="toc-text">1. 头文件中只可以放置函数声明，不可以放置函数定义吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-为什么有些头文件中直接把函数定义都写进去了？"><span class="toc-number">2.</span> <span class="toc-text">2. 为什么有些头文件中直接把函数定义都写进去了？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-模板函数-类中要求头文件中必须包含定义才能进行模板实例化，这种定义放在头文件的情况会不会有问题？"><span class="toc-number">3.</span> <span class="toc-text">3. 模板函数/类中要求头文件中必须包含定义才能进行模板实例化，这种定义放在头文件的情况会不会有问题？</span></a></li></ol>
+		
+		</div>
+		
+		<blockquote>
+<p>本文引用了<a href="https://zybuluo.com/uuprince/note/81709" target="_blank" rel="external">博文</a>，感谢原文作者。</p>
+</blockquote>
+<p><strong>问题</strong>：某个头文件中声明并定义了一个函数，然后在多个源码文件中调用该函数，编译链接时出现了该函数multiple definition问题，在头文件中添加了 #ifndef 头也不行，经过尝试发现如果将该函数的声明和定义分开到.h和.cpp文件之后问题消失，为什么不能将函数直接定义在.h文件中呢？</p>
+<p>针对该问题，抽象出如下几个问题：  </p>
+<h3 id="1-头文件中只可以放置函数声明，不可以放置函数定义吗？"><a href="#1-头文件中只可以放置函数声明，不可以放置函数定义吗？" class="headerlink" title="1. 头文件中只可以放置函数声明，不可以放置函数定义吗？"></a>1. 头文件中只可以放置函数声明，不可以放置函数定义吗？</h3><p>以下面的程序为例：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// a.h</span></div><div class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __a_h__</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __a_h__</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcA</span><span class="params">(<span class="keyword">void</span>)</span></span>;   <span class="comment">// 声明</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcA</span><span class="params">(<span class="keyword">void</span>)</span>    <span class="comment">// 定义</span></span></div><div class="line">&#123;&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line"><span class="comment">// b.h</span></div><div class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __b_h__</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __b_h__</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcB</span><span class="params">(<span class="keyword">void</span>)</span></span>;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line"><span class="comment">// b.cpp</span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"b.h"</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"a.h"</span></span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcB</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">    funcA();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//c.h</span></div><div class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __c_h__</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __c_h__</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcC</span><span class="params">(<span class="keyword">void</span>)</span></span>;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line"><span class="comment">//c.cpp</span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"c.h"</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"a.h"</span></span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcC</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">    funcA();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//main.cpp</span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"b.h"</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"c.h"</span></span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></div><div class="line">&#123;</div><div class="line">    funcB();</div><div class="line">    funcC();</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上述代码编译链接的时候编译器（g++）会报如下错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">c.o: In function `funcA()&apos;:</div><div class="line">c.cpp:(.text+0x0): multiple definition of `funcA()&apos;</div><div class="line">b.o:b.cpp:(.text+0x0): first defined here</div><div class="line">collect2: ld returned 1 exit status</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>为什么编译器在链接的时候会抱怨“funcA()重复定义”？<br>其实本质问题就是funcA的定义被放在了a.h中，如果写在a.cpp中，就不会有重复定义的问题。下面分析一下编译过程都发生了什么，这样更容易从编译器的角度理解此问题。</p>
+</blockquote>
+<p>编译器处理include指令很简单粗暴，就是直接把头文件中的内容包含进来。所以b.cpp、c.cpp和main.cpp代码展开后可以简化为：  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// b.cpp</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcA</span><span class="params">(<span class="keyword">void</span>)</span></span>;   <span class="comment">// 声明</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcA</span><span class="params">(<span class="keyword">void</span>)</span>    <span class="comment">// 定义</span></span></div><div class="line">&#123;&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcB</span><span class="params">(<span class="keyword">void</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcB</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">    funcA();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// c.cpp</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcA</span><span class="params">(<span class="keyword">void</span>)</span></span>;   <span class="comment">// 声明</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcA</span><span class="params">(<span class="keyword">void</span>)</span>    <span class="comment">// 定义</span></span></div><div class="line">&#123;&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcC</span><span class="params">(<span class="keyword">void</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcC</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">    funcA();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// main.cpp</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcB</span><span class="params">(<span class="keyword">void</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcC</span><span class="params">(<span class="keyword">void</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></div><div class="line">&#123;</div><div class="line">    funcB();</div><div class="line">    funcC();</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>编译的时候，C++是采用独立编译，就是每个cpp单独编译成对应的.o文件，最后链接器再将多个.o文件链接成可执行程序。所以从编译的时候，从各个cpp文件看，编译没有任何问题。但是能发现一个问题，b.o中声明和定义了一次funcA()，c.o中也声明和定义funcA()，这就是编译器报重复定义的原因。有人可能会问，既然是从同一份文件include过来的函数funcA，那么定义都是同一份，为什么编译器不会智能的处理一下，让链接时候不报错呢？<br>其实编译器链接的时候，并不知道b.cpp中定义的funcA与c.cpp中定义的funcA是同一个文件include过来的，它只会认为如果有两份定义，而且这两份定义如果实现不同，那么到底以哪个为准呢？既然决定不了，那就干脆报错好了。  </p>
+<h3 id="2-为什么有些头文件中直接把函数定义都写进去了？"><a href="#2-为什么有些头文件中直接把函数定义都写进去了？" class="headerlink" title="2. 为什么有些头文件中直接把函数定义都写进去了？"></a>2. 为什么有些头文件中直接把函数定义都写进去了？</h3><p>刚才的分析，可以得出结论：头文件中只做变量和函数的声明，而不要定义，否则就会有重复定义的错误。但是有几种情况是例外的。  </p>
+<ul>
+<li>内联函数的定义</li>
+<li>类（class）的定义</li>
+<li>const 和 static 变量</li>
+</ul>
+<p>以上几种可以在头文件中定义，下面逐个进行解释。<br>内联的目的就是在编译期让编译器把使用函数的地方直接替换掉，而不是像普通函数一样通过链接器把地址链接上。这种情况，如果定义没有在头文件的话，编译器是无法进行函数替换的。所以C++规定，内联函数可以在程序中定义多次，只要内联函数定义在同一个cpp中只出现一次就行。<br>按照这个理论，上述a.h简单修改一下就可以避免重复定义了。  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// a.h</span></div><div class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __a_h__</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> __a_h__</span></div><div class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">funcA</span><span class="params">(<span class="keyword">void</span>)</span></span>;   <span class="comment">// 内联声明</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">funcA</span><span class="params">(<span class="keyword">void</span>)</span>    <span class="comment">// 定义</span></span></div><div class="line">&#123;&#125;</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
+<p>此外，类（class）的定义，可以放在头文件中。<br>用类创建对象的时候，编译器要知道对象如何布局才能分配内存，因此类的定义需要在头文件中。一般情况下，我们把类内成员函数的定义放在cpp文件中，但是如果直接在class中完成函数声明+定义的话，这种函数会被编译器当作inline的，因此满足上面inline函数可以放在头文件的规则。但是如果声明和定义分开实现，但是都放在头文件中，那就会报重复定义了！！<br>const 和 static 变量，可以放在头文件中。<br>const对象默认是static的，而不是extern的，所以即使放在头文件中声明和定义。多个cpp引用同一个头文件，互相也没有感知，所以不会导致重复定义。  </p>
+<h3 id="3-模板函数-类中要求头文件中必须包含定义才能进行模板实例化，这种定义放在头文件的情况会不会有问题？"><a href="#3-模板函数-类中要求头文件中必须包含定义才能进行模板实例化，这种定义放在头文件的情况会不会有问题？" class="headerlink" title="3. 模板函数/类中要求头文件中必须包含定义才能进行模板实例化，这种定义放在头文件的情况会不会有问题？"></a>3. 模板函数/类中要求头文件中必须包含定义才能进行模板实例化，这种定义放在头文件的情况会不会有问题？</h3><p>前面分析可知，头文件中要么只有函数声明，要么是含有inline函数的定义。但是模板的定义(包括非inline函数/成员函数)要求声明和实现都必须放在头文件中，难道没有“重复定义”的问题？？？<br>答案当然是不会有问题（要不template早就被抱怨死了）。其实编译器也考虑到会遇到类似的问题，在编译器或连接器的某处已经有防止重定义的处理了。这里参考stackflow中的答案：<a href="http://stackoverflow.com/questions/235616/multiple-definitions-of-a-function-template" target="_blank" rel="external">http://stackoverflow.com/questions/235616/multiple-definitions-of-a-function-template</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/C/">C++</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://jiadebin.github.io/2017/04/03/头文件中定义函数引发的multiple-definition/" data-title="头文件中定义函数引发的multiple definition | 皓月繁星点点" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/03/C-语言相关/" title="C++语言相关">
+  <strong>上一篇：</strong><br/>
+  <span>
+  C++语言相关</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/03/Paxos算法理解/"  title="Paxos算法理解">
+ <strong>下一篇：</strong><br/> 
+ <span>Paxos算法理解
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-头文件中只可以放置函数声明，不可以放置函数定义吗？"><span class="toc-number">1.</span> <span class="toc-text">1. 头文件中只可以放置函数声明，不可以放置函数定义吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-为什么有些头文件中直接把函数定义都写进去了？"><span class="toc-number">2.</span> <span class="toc-text">2. 为什么有些头文件中直接把函数定义都写进去了？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-模板函数-类中要求头文件中必须包含定义才能进行模板实例化，这种定义放在头文件的情况会不会有问题？"><span class="toc-number">3.</span> <span class="toc-text">3. 模板函数/类中要求头文件中必须包含定义才能进行模板实例化，这种定义放在头文件的情况会不会有问题？</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/B-tree/" title="B+tree">B+tree<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Paxos/" title="Paxos">Paxos<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/sublime-text/" title="sublime text">sublime text<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/快捷键/" title="快捷键">快捷键<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/shell/" title="shell">shell<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/隔离级别/" title="隔离级别">隔离级别<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">Weibo</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=b3593ceb&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m 皓繁. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2163818357" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="皓繁">皓繁</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

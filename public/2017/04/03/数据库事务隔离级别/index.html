@@ -1,0 +1,561 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>数据库事务隔离级别 | 皓月繁星点点</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="皓繁">
+    
+
+    
+    <meta name="description" content="参考资料：http://dblab.xmu.edu.cn/post/1359/http://www.cnblogs.com/lyhabc/articles/3219693.html  
+一、SQL标准隔离级别SQL92标准中对数据库事务隔离级别进行了分类：  
+
+read uncommitted
+read committed
+repeatable read
+serializable
+
+SQL92事">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库事务隔离级别">
+<meta property="og:url" content="http://jiadebin.github.io/2017/04/03/数据库事务隔离级别/index.html">
+<meta property="og:site_name" content="皓月繁星点点">
+<meta property="og:description" content="参考资料：http://dblab.xmu.edu.cn/post/1359/http://www.cnblogs.com/lyhabc/articles/3219693.html  
+一、SQL标准隔离级别SQL92标准中对数据库事务隔离级别进行了分类：  
+
+read uncommitted
+read committed
+repeatable read
+serializable
+
+SQL92事">
+<meta property="og:updated_time" content="2017-04-04T11:56:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据库事务隔离级别">
+<meta name="twitter:description" content="参考资料：http://dblab.xmu.edu.cn/post/1359/http://www.cnblogs.com/lyhabc/articles/3219693.html  
+一、SQL标准隔离级别SQL92标准中对数据库事务隔离级别进行了分类：  
+
+read uncommitted
+read committed
+repeatable read
+serializable
+
+SQL92事">
+
+    
+    <link rel="alternative" href="/atom.xml" title="皓月繁星点点" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/author.jpg" alt="皓月繁星点点" title="皓月繁星点点"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="皓月繁星点点">皓月繁星点点</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:jiadebin.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/03/数据库事务隔离级别/" title="数据库事务隔离级别" itemprop="url">数据库事务隔离级别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="皓繁" target="_blank" itemprop="author">皓繁</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-03T08:39:35.000Z" itemprop="datePublished"> Published 2017-04-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、SQL标准隔离级别"><span class="toc-number">1.</span> <span class="toc-text">一、SQL标准隔离级别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-read-uncommitted"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 read uncommitted</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-read-committed"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 read committed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-repeatable-read"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 repeatable read</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-serializable"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 serializable</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、其他隔离级别"><span class="toc-number">2.</span> <span class="toc-text">二、其他隔离级别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MVCC-Based-Read-committed"><span class="toc-number">2.1.</span> <span class="toc-text">MVCC-Based Read committed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#快照隔离级别"><span class="toc-number">2.2.</span> <span class="toc-text">快照隔离级别</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>参考资料：<br><a href="http://dblab.xmu.edu.cn/post/1359/" target="_blank" rel="external">http://dblab.xmu.edu.cn/post/1359/</a><br><a href="http://www.cnblogs.com/lyhabc/articles/3219693.html" target="_blank" rel="external">http://www.cnblogs.com/lyhabc/articles/3219693.html</a>  </p>
+<h2 id="一、SQL标准隔离级别"><a href="#一、SQL标准隔离级别" class="headerlink" title="一、SQL标准隔离级别"></a>一、SQL标准隔离级别</h2><p>SQL92标准中对数据库事务隔离级别进行了分类：  </p>
+<ul>
+<li>read uncommitted</li>
+<li>read committed</li>
+<li>repeatable read</li>
+<li>serializable</li>
+</ul>
+<p>SQL92事务隔离级别的定义是基于悲观锁的思想，例如教科书上的三级封锁协议的定义；商用数据库的实现过程中，多采用基于乐观锁的MVCC技术；商用数据库对事务隔离级别的定义，跟SQL92的标准是有所差别的。</p>
+<h3 id="1-1-read-uncommitted"><a href="#1-1-read-uncommitted" class="headerlink" title="1.1 read uncommitted"></a>1.1 read uncommitted</h3><p>读写操作互不阻塞，但读操作可能读到未提交的脏数据。<br>实现时无需加锁。</p>
+<h3 id="1-2-read-committed"><a href="#1-2-read-committed" class="headerlink" title="1.2 read committed"></a>1.2 read committed</h3><p>读写操作会相互阻塞，因为每个读操作都要读到已提交的最新数据，当事务1读取数据项x，而事务2修改了x且执行commit trans之前，事务1的查询语句执行会阻塞，等待事务2完成commit操作之后才能读取到。<br>这个现象是语句级的，即事务中可能有多条语句，每条读写语句都遵循上述规则，一条查询语句必须等待其他针对相同数据项的更新语句（若存在的话）的提交才能执行。<br>实现方式是，读数据前必须首先获得一个读操作锁，一旦数据读取之后该锁被立即释放。<br>–示例：</p>
+<blockquote>
+<p>在此示例中，我们用两个session分别开启事务，一个读事务将读取数据，然后另一事务修改此数据。执行完的读操作（即事务内的select语句）不阻塞由其他事务的更新操作，即执行完毕的读不会阻塞写。但是，在其他事务已经做了更新操作后，读操作会被阻塞住，直到更新操作事务提交为止。</p>
+</blockquote>
+<hr>
+<p>–Session 1：<br>USE [db_test]<br>GO<br>BEGIN TRAN<br>–查询1<br>–这个查询将返回4号员工有48小时休假时间：<br>SELECT [EmployeeID],[VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4  </p>
+<hr>
+<p>–Session 2：<br>USE [db_test]<br>GO<br>BEGIN TRAN<br>–修改1<br>–休假时间减去8<br>–修改不会被阻塞，因为会话1不会持有S锁不放<br>UPDATE [HumanResources].[Employee]<br>SET [VacationHours]=[VacationHours]-8<br>WHERE [EmployeeID]=4<br>–查询1<br>–现在休假时间只有40小时<br>SELECT [VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4  </p>
+<hr>
+<p>–Session 1：<br>–重新运行查询语句，会被会话2阻塞<br>–查询2<br>SELECT [EmployeeID],[VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4  </p>
+<hr>
+<p>–Session 2：<br>–提交事务<br>COMMIT TRAN<br>GO  </p>
+<hr>
+<p>–Session 1：<br>–此时先前被阻塞的查询结束，返回会话2修改好的新数据：40<br>–查询3<br>–这里返回40，因为会话2已经提交了事务：<br>SELECT [EmployeeID],[VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4<br>–修改2<br>–将该员工的时间再次减8，这里会成功：<br>UPDATE [HumanResources].[Employee]<br>SET [SickLeaveHours]=[SickLeaveHours]-8<br>WHERE [EmployeeID]=4<br>SELECT [SickLeaveHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4<br>–回滚会话1的修改<br>–会话2的修改将不受影响，此时值恢复为40：<br>ROLLBACK TRAN<br>GO  </p>
+<p>SELECT [SickLeaveHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4</p>
+<h3 id="1-3-repeatable-read"><a href="#1-3-repeatable-read" class="headerlink" title="1.3 repeatable read"></a>1.3 repeatable read</h3><p>一个事务中的前后两次读操作总是保证能够读到相同的值，这是与read committed不同的地方(行级锁且锁住读操作的间隔，而read committed不锁间隔)。<br>可重复读可以避免脏读、不可重复读现象，但可能会出现幻想读（幻象即之前没出现的数据像幽灵一样突然出现），这是因为该隔离级别可以锁住已有数据，但可能其他事务又插入了新的符合检索条件的数据。<br>实现方式是，事务在请求读数据之前必须获得一个锁，并且保持该锁直到事务结束。  </p>
+<h3 id="1-4-serializable"><a href="#1-4-serializable" class="headerlink" title="1.4 serializable"></a>1.4 serializable</h3><p>最高隔离级别，事务的执行仿佛是串行化的，或并发的事务执行结果是完全可串行化的。<br>实现方式是，每个事务都直接锁住整张表。</p>
+<h2 id="二、其他隔离级别"><a href="#二、其他隔离级别" class="headerlink" title="二、其他隔离级别"></a>二、其他隔离级别</h2><p>在商用数据库中比较常见的有快照隔离、游标稳定性隔离、读一致等。<br>基于多版本并发控制MVCC技术可以实现多种隔离级别，如快照隔离、以及mvcc-based read committed（基于多版本的已提交读隔离级别）。<br>在SQL标准的read committed隔离级别下，一个读操作会和一个写操作相互阻塞。有些关系型数据库（例如ORACLE）使用的是另一种处理方式，在任何一个修改之前，先对修改前的版本做一个复制，后续的一切读操作都会去读这个复制的版本，修改将创建一个新的版本。在这种处理方式下，读、写操作不会互相阻塞。使用这种行版本控制机制的好处，是程序的并发性比较高，但是缺点是用户读到的虽然不是一个脏数据，但是可能是个正在被修改马上就要过期的数据值。如果根据这个过期的值做数据修改，会产生逻辑错误。有些用户可能为了更高的并发性而不在乎这种缺点，为了满足这部分用户的需求，SQL2005也引入了这种机制，来实现类似的功能。所以选取行版本并发控制隔离级别也可以成为消除阻塞和死锁的一种手段。<br>SQL有两种基于行版本并发控制的隔离级别：</p>
+<ul>
+<li>已提交读隔离（read_committed_snapshot）</li>
+<li>快照隔离级别</li>
+</ul>
+<h3 id="MVCC-Based-Read-committed"><a href="#MVCC-Based-Read-committed" class="headerlink" title="MVCC-Based Read committed"></a>MVCC-Based Read committed</h3><p>示例：<br>– 使用行版本控制的已提交读<br>– 在此示例中，使用行版本控制的已提交读事务与其他事务并发运行。已提交读事务的行为与快照事务的行为<br>– 有所不同。与快照事务相同的是，即使其他事务修改了数据，已提交读事务也将读取版本化的行。<br>– 与快照事务不同的是，已提交读将执行下列操作：<br>–（1）在其他事务提交数据更改之后，读取修改的数据<br>–（2）能够更新由其他事务修改的数据，而快照事务不能<br>– 在会话1上：</p>
+<p>USE [db_test]<br>GO<br>–启用行版本控制的已提交读<br>–注意运行这句话的时候，不可以有其他连接同时使用[db_test]<br>ALTER DATABASE [db_test] SET READ_COMMITTED_SNAPSHOT ON<br>GO<br>–设置使用已提交读隔离级别<br>SET TRANSACTION ISOLATION LEVEL READ COMMITTED<br>GO<br>BEGIN TRAN<br>–查询1<br>–这里将返回初始值48<br>SELECT [EmployeeID],[VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4  </p>
+<hr>
+<p>–在会话2上：<br>USE [db_test]<br>GO<br>BEGIN TRAN<br>–修改1<br>–假期时间减8<br>–修改不会被会话1阻塞<br>UPDATE [HumanResources].[Employee]<br>SET [VacationHours]=[VacationHours]-8<br>WHERE [EmployeeID]=4<br>–查询1<br>–确认值已经被修改为40<br>SELECT [VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4  </p>
+<hr>
+<p>–在会话1上：<br>–查询2<br>–再次运行查询语句<br>–还是返回48（修改前的值），因为会话2还没有提交<br>–会话1是从版本化的行读取数据<br>SELECT [EmployeeID],[VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4  </p>
+<hr>
+<p>–在会话2上：<br>–提交事务<br>COMMIT TRAN<br>GO  </p>
+<hr>
+<p>–在会话1上：<br>–查询3<br>–这里和范例B不同，会话1始终返回已提交的值<br>–这里返回40，因为会话2已经提交了事务<br>SELECT [EmployeeID],[VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4<br>–修改2<br>–这里会成功<br>UPDATE [HumanResources].[Employee]<br>SET [SickLeaveHours]=[SickLeaveHours]-8<br>WHERE [EmployeeID]=4<br>–可以回滚会话1的修改<br>–会话2的修改不会受影响<br>ROLLBACK TRAN<br>GO  </p>
+<hr>
+<h3 id="快照隔离级别"><a href="#快照隔离级别" class="headerlink" title="快照隔离级别"></a>快照隔离级别</h3><p>快照隔离示例：<br>– 快照隔离<br>– 此示例中，在快照隔离下运行的事务将读取数据，然后由另一个事务修改此数据。快照事务<br>– 不阻塞由其他事务执行的更新操作，他忽略数据的修改继续从版本化的行读取数据。也就是<br>– 说，读取到的是数据修改前的版本。但是，当快照事务尝试修改已由其他事务修改的数据时，<br>– 他将生成错误并终止</p>
+<hr>
+<p>–在会话1上：<br>USE [db_test]<br>GO  </p>
+<hr>
+<p>– 启用快照隔离<br>ALTER DATABASE [db_test] SET ALLOW_SNAPSHOT_ISOLATION ON<br>GO<br>–设置使用快照隔离级别<br>SET TRANSACTION ISOLATION LEVEL SNAPSHOT<br>GO<br>BEGIN TRAN<br>–查询1<br>–查询返回员工有48小时假期<br>SELECT [EmployeeID],[VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4</p>
+<hr>
+<p>–在会话2上：<br>USE [db_test]<br>GO<br>BEGIN TRAN<br>–修改1<br>–假期时间减8<br>–修改不会被会话1阻塞<br>UPDATE [HumanResources].[Employee]<br>SET [VacationHours]=[VacationHours]-8<br>WHERE [EmployeeID]=4<br>–查询1<br>–确认值已经被改成40<br>SELECT [VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4<br>–在会话1上：<br>–查询2<br>–再次运行查询语句<br>–还是返回48（修改前的值），因为会话1是从版本化的行读取数据<br>SELECT [EmployeeID],[VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4<br>–在会话2上：<br>–提交事务<br>COMMIT TRAN<br>GO  </p>
+<hr>
+<p>–在会话1上：<br>–查询3<br>–再次运行查询语句<br>–还是返回48（修改前的值），因为会话1还是从版本化的行读取数据<br>SELECT [EmployeeID],[VacationHours] FROM [HumanResources].[Employee] WHERE [EmployeeID]=4<br>–修改2<br>–因为数据已经被会话2修改过，会话1想做任何修改时<br>–会遇到3960错误<br>–事务会自动回滚<br>UPDATE [HumanResources].[Employee]<br>SET [SickLeaveHours]=[SickLeaveHours]-8<br>WHERE [EmployeeID]=4<br>–会话1的修改会回滚<br>–会话2的修改不会回滚<br>ROLLBACK TRAN<br>GO  </p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/隔离级别/">隔离级别</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://jiadebin.github.io/2017/04/03/数据库事务隔离级别/" data-title="数据库事务隔离级别 | 皓月繁星点点" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2017/04/03/Homeland/"  title="Homeland">
+ <strong>下一篇：</strong><br/> 
+ <span>Homeland
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、SQL标准隔离级别"><span class="toc-number">1.</span> <span class="toc-text">一、SQL标准隔离级别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-read-uncommitted"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 read uncommitted</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-read-committed"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 read committed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-repeatable-read"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 repeatable read</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-serializable"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 serializable</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、其他隔离级别"><span class="toc-number">2.</span> <span class="toc-text">二、其他隔离级别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MVCC-Based-Read-committed"><span class="toc-number">2.1.</span> <span class="toc-text">MVCC-Based Read committed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#快照隔离级别"><span class="toc-number">2.2.</span> <span class="toc-text">快照隔离级别</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/B-tree/" title="B+tree">B+tree<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Paxos/" title="Paxos">Paxos<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/sublime-text/" title="sublime text">sublime text<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/快捷键/" title="快捷键">快捷键<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/shell/" title="shell">shell<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/time/" title="time">time<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/C/" title="C++">C++<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/hexo/" title="hexo">hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/隔离级别/" title="隔离级别">隔离级别<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">Weibo</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=b3593ceb&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m 皓繁. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/2163818357" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="皓繁">皓繁</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
